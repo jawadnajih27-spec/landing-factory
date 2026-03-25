@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>{{TITLE}}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <style>
+    :root{--r:#ff6b6b;--r2:#ee5a24;--y:#ffd93d;--a:#6c5ce7;--bg:#0d0d1a;--bg2:#12122a;--t:#fff;--tm:rgba(255,255,255,.65)}
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'Noto Kufi Arabic',sans-serif;background:var(--bg);color:var(--t);overflow-x:hidden;line-height:1.6;cursor:none}
+
+    /* CURSOR */
+    .cur{width:10px;height:10px;background:var(--r);border-radius:50%;position:fixed;z-index:9999;pointer-events:none;transform:translate(-50%,-50%);mix-blend-mode:screen;transition:width .2s,height .2s}
+    .cur-ring{width:36px;height:36px;border:1px solid rgba(255,107,107,.5);border-radius:50%;position:fixed;z-index:9998;pointer-events:none;transform:translate(-50%,-50%);transition:all .12s ease-out}
+
+    /* BG */
+    .bg-orb{position:fixed;inset:0;z-index:-1;
+      background:radial-gradient(ellipse at 20% 80%,rgba(255,107,107,.12) 0%,transparent 50%),
+      radial-gradient(ellipse at 80% 20%,rgba(108,92,231,.08) 0%,transparent 50%)}
+    .grid-lines{position:fixed;inset:0;z-index:-1;
+      background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);
+      background-size:50px 50px}
+
+    /* SCROLL DOTS */
+    .scroll-nav{position:fixed;left:1.5rem;top:50%;transform:translateY(-50%);
+      display:flex;flex-direction:column;gap:.6rem;z-index:100}
+    .s-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.15);cursor:pointer;transition:all .3s}
+    .s-dot.on{background:var(--r);box-shadow:0 0 10px var(--r);transform:scale(1.6)}
+
+    /* SLIDES */
+    .slide{min-height:100vh;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;padding:4rem 5%}
+    .divider{height:1px;background:linear-gradient(90deg,transparent,rgba(255,107,107,.25),transparent)}
+
+    /* ══ SLIDE 1 — HERO ══ */
+    .s1-inner{display:grid;grid-template-columns:1.15fr 1fr;align-items:center;gap:4rem;max-width:1100px;width:100%}
+    .product-badge{display:inline-flex;align-items:center;gap:.5rem;
+      background:rgba(255,107,107,.12);border:1px solid rgba(255,107,107,.35);
+      border-radius:100px;padding:.55rem 1.4rem;font-size:.82rem;font-weight:700;
+      color:var(--r);margin-bottom:2rem;animation:badge-pulse 2.5s ease-in-out infinite}
+    @keyframes badge-pulse{0%,100%{box-shadow:0 0 0 0 rgba(255,107,107,.3)}50%{box-shadow:0 0 20px 5px rgba(255,107,107,.15)}}
+    .hero-h1{font-size:clamp(2.2rem,4.5vw,3.8rem);font-weight:900;line-height:1.15;margin-bottom:.85rem;
+      background:linear-gradient(135deg,#fff 0%,#ffd93d 100%);
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .tagline{font-size:1.25rem;color:var(--r);font-weight:700;margin-bottom:1.5rem;
+      display:flex;align-items:center;gap:.75rem}
+    .tagline::before{content:'';display:inline-block;width:36px;height:3px;
+      background:linear-gradient(90deg,var(--r),transparent);border-radius:2px;flex-shrink:0}
+    .hero-desc{font-size:1rem;color:var(--tm);line-height:1.9;margin-bottom:2rem;max-width:90%}
+    .price-row{display:flex;align-items:baseline;gap:.75rem;margin-bottom:2rem}
+    .price-val{font-size:3.2rem;font-weight:900;
+      background:linear-gradient(135deg,var(--r),var(--y));
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1}
+    .buy-btn{display:inline-flex;align-items:center;justify-content:center;gap:.75rem;
+      background:linear-gradient(135deg,var(--r),var(--r2));color:#fff;text-decoration:none;
+      padding:1.1rem 2.75rem;border-radius:14px;font-size:1.1rem;font-weight:800;
+      font-family:inherit;border:none;cursor:none;
+      transition:all .4s cubic-bezier(.175,.885,.32,1.275);
+      box-shadow:0 10px 40px rgba(255,107,107,.35);position:relative;overflow:hidden}
+    .buy-btn::before{content:'🛒';font-size:1.2rem}
+    .buy-btn::after{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;
+      background:linear-gradient(90deg,transparent,rgba(255,255,255,.25),transparent);transition:left .5s}
+    .buy-btn:hover::after{left:100%}
+    .buy-btn:hover{transform:translateY(-4px) scale(1.02);box-shadow:0 20px 60px rgba(255,107,107,.5)}
+    .guarantee{display:flex;align-items:center;gap:.5rem;margin-top:1.25rem;font-size:.85rem;color:rgba(255,255,255,.35)}
+
+    /* 3D PRODUCT CARD */
+    .product-card-3d{background:linear-gradient(135deg,rgba(255,255,255,.1),rgba(255,255,255,.04));
+      backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.14);border-radius:28px;
+      padding:2.5rem;width:100%;max-width:420px;
+      box-shadow:0 40px 80px rgba(0,0,0,.4);
+      transform:perspective(900px) rotateY(-6deg) rotateX(4deg);
+      animation:card-float 7s ease-in-out infinite;transition:transform .5s}
+    @keyframes card-float{0%,100%{transform:perspective(900px) rotateY(-6deg) rotateX(4deg) translateY(0)}
+      50%{transform:perspective(900px) rotateY(-6deg) rotateX(4deg) translateY(-18px)}}
+    .product-card-3d:hover{transform:perspective(900px) rotateY(0) rotateX(0) scale(1.02)}
+    .p-icon{width:90px;height:90px;background:linear-gradient(135deg,var(--r),var(--y));
+      border-radius:22px;display:flex;align-items:center;justify-content:center;
+      font-size:2.8rem;margin:0 auto 1.5rem;box-shadow:0 16px 40px rgba(255,107,107,.3)}
+    .p-name{font-size:1.6rem;font-weight:900;text-align:center;margin-bottom:1rem}
+    .p-list{list-style:none}
+    .p-list li{display:flex;align-items:center;gap:.65rem;padding:.65rem 0;
+      border-bottom:1px solid rgba(255,255,255,.08);font-size:.92rem}
+    .p-list li::before{content:'✓';width:22px;height:22px;background:rgba(0,255,0,.15);
+      border-radius:50%;color:#00ff00;font-weight:900;font-size:.75rem;
+      display:flex;align-items:center;justify-content:center;flex-shrink:0}
+
+    /* ══ SLIDE 2 — BONUSES ══ */
+    .s2{background:var(--bg2)}
+    .slide-num{font-size:7rem;font-weight:900;color:rgba(255,255,255,.025);
+      position:absolute;top:2rem;left:50%;transform:translateX(-50%);pointer-events:none;letter-spacing:-3px}
+    .sec-hd{text-align:center;margin-bottom:4rem;position:relative;z-index:1}
+    .sec-tag{font-size:.7rem;letter-spacing:4px;text-transform:uppercase;color:var(--r);font-weight:700;margin-bottom:.75rem}
+    .sec-h{font-size:clamp(1.8rem,4vw,3rem);font-weight:900;
+      background:linear-gradient(135deg,#fff,rgba(255,217,61,.8));
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .bonus-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:2rem;max-width:900px;width:100%;position:relative;z-index:1}
+    .bonus-card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);
+      border-radius:22px;padding:2.5rem;position:relative;overflow:hidden;
+      transition:all .4s cubic-bezier(.4,0,.2,1);cursor:default}
+    .bonus-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;
+      background:linear-gradient(90deg,var(--r),var(--y))}
+    .bonus-card:hover{transform:translateY(-10px);border-color:rgba(255,107,107,.25);box-shadow:0 30px 60px rgba(0,0,0,.3)}
+    .b-num{position:absolute;top:1.25rem;left:1.5rem;font-size:4rem;font-weight:900;color:rgba(255,255,255,.04);line-height:1}
+    .b-icon{width:64px;height:64px;background:linear-gradient(135deg,rgba(255,107,107,.18),rgba(255,217,61,.15));
+      border:1px solid rgba(255,107,107,.25);border-radius:18px;
+      display:flex;align-items:center;justify-content:center;font-size:1.9rem;margin-bottom:1.25rem}
+    .b-label{font-size:.68rem;letter-spacing:3px;text-transform:uppercase;color:var(--r);font-weight:700;margin-bottom:.4rem}
+    .b-name{font-size:1.3rem;font-weight:800}
+
+    /* SELLER */
+    .seller-row{text-align:center;margin-top:3rem;color:rgba(255,255,255,.25);font-size:.9rem;position:relative;z-index:1}
+
+    /* ══ SLIDE 3 — CTA ══ */
+    .s3{background:linear-gradient(135deg,#0a0010,#15002a,#0a0a1f);position:relative}
+    .ring-3d{position:absolute;border-radius:50%;animation:ring-spin 18s linear infinite;pointer-events:none}
+    .ring-3d-1{width:600px;height:600px;border:1px solid rgba(255,107,107,.06);
+      top:50%;left:50%;transform:translate(-50%,-50%) rotateX(65deg)}
+    .ring-3d-2{width:400px;height:400px;border:1px solid rgba(255,107,107,.09);
+      top:50%;left:50%;transform:translate(-50%,-50%) rotateX(65deg);
+      animation-duration:12s;animation-direction:reverse}
+    @keyframes ring-spin{from{transform:translate(-50%,-50%) rotateX(65deg) rotateZ(0)}to{transform:translate(-50%,-50%) rotateX(65deg) rotateZ(360deg)}}
+    .cta-content{position:relative;z-index:2;text-align:center;max-width:700px}
+    .urgency{display:inline-flex;align-items:center;gap:.5rem;
+      background:rgba(255,107,107,.1);border:1px solid rgba(255,107,107,.25);
+      border-radius:99px;padding:.4rem 1.25rem;font-size:.75rem;color:var(--r);
+      font-weight:700;letter-spacing:2px;text-transform:uppercase;
+      margin-bottom:2rem;animation:pulse-urgent 2s infinite}
+    @keyframes pulse-urgent{0%,100%{box-shadow:0 0 0 0 rgba(255,107,107,.2)}50%{box-shadow:0 0 0 8px rgba(255,107,107,0)}}
+    .cta-h{font-size:clamp(2.5rem,7vw,5.5rem);font-weight:900;line-height:1.1;margin-bottom:1.5rem;
+      background:linear-gradient(135deg,#fff 0%,rgba(255,107,107,.9) 100%);
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .cta-price{font-size:clamp(1.5rem,4vw,2.8rem);font-weight:900;color:var(--r);margin-bottom:2.5rem}
+
+    footer{background:#05050f;border-top:1px solid rgba(255,255,255,.04);
+      padding:2rem 3rem;display:flex;align-items:center;justify-content:space-between;
+      flex-wrap:wrap;gap:1rem;font-size:.78rem;color:rgba(255,255,255,.2);position:relative;z-index:2}
+
+    @media(max-width:900px){
+      .s1-inner{grid-template-columns:1fr;text-align:center}
+      .tagline{justify-content:center}
+      .price-row{justify-content:center}
+      .product-card-3d{transform:none;margin:0 auto}
+      .scroll-nav,.cur,.cur-ring{display:none}
+      body{cursor:auto}
+      footer{flex-direction:column;text-align:center}
+    }
+  </style>
+</head>
+<body>
+<div class="cur" id="cur"></div>
+<div class="cur-ring" id="curRing"></div>
+<div class="bg-orb"></div>
+<div class="grid-lines"></div>
+
+<div class="scroll-nav">
+  <div class="s-dot on" onclick="goTo(0)"></div>
+  <div class="s-dot" onclick="goTo(1)"></div>
+  <div class="s-dot" onclick="goTo(2)"></div>
+</div>
+
+<!-- SLIDE 1 -->
+<section class="slide" id="s0">
+  <div class="s1-inner">
+    <div>
+      <div class="product-badge">📦 منتج رقمي حصري</div>
+      <h1 class="hero-h1">{{PRODUCT_NAME}}</h1>
+      <div class="tagline">{{TAGLINE}}</div>
+      <p class="hero-desc">{{DESCRIPTION}}</p>
+      <div class="price-row"><span class="price-val">{{PRICE}}</span></div>
+      <a href="{{CTA_LINK}}" class="buy-btn">{{CTA_TEXT}}</a>
+      <div class="guarantee">🔒 ضمان استرداد كامل خلال 30 يوماً</div>
+    </div>
+    <div style="display:flex;justify-content:center">
+      <div class="product-card-3d">
+        <div class="p-icon">💎</div>
+        <div class="p-name">{{PRODUCT_NAME}}</div>
+        <ul class="p-list">
+          <li>محتوى شامل ومتكامل</li>
+          <li>تحديثات مجانية مدى الحياة</li>
+          <li>دعم فني ممتاز</li>
+          <li>وصول فوري بعد الشراء</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- SLIDE 2 -->
+<section class="slide s2" id="s1">
+  <div class="slide-num">02</div>
+  <div style="width:100%;max-width:1000px;display:flex;flex-direction:column;align-items:center">
+    <div class="sec-hd">
+      <div class="sec-tag">الحصريات</div>
+      <h2 class="sec-h">🎁 بونص لا يُقاوم</h2>
+      <p style="color:var(--tm);margin-top:.5rem">بالإضافة للمنتج الرئيسي ستحصل على</p>
+    </div>
+    <div class="bonus-grid">
+      <div class="bonus-card">
+        <div class="b-num">01</div>
+        <div class="b-icon">🎯</div>
+        <div class="b-label">بونص أول</div>
+        <div class="b-name">{{BONUS_1}}</div>
+      </div>
+      <div class="bonus-card">
+        <div class="b-num">02</div>
+        <div class="b-icon">💎</div>
+        <div class="b-label">بونص ثانٍ</div>
+        <div class="b-name">{{BONUS_2}}</div>
+      </div>
+    </div>
+    <div class="seller-row">— {{SELLER_NAME}} —</div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- SLIDE 3 -->
+<section class="slide s3" id="s2">
+  <div class="ring-3d ring-3d-1"></div>
+  <div class="ring-3d ring-3d-2"></div>
+  <div class="cta-content">
+    <div class="urgency">⚡ لا تفوّت هذه الفرصة</div>
+    <h2 class="cta-h">جاهز للتحوّل؟</h2>
+    <div class="cta-price">{{PRICE}} فقط</div>
+    <a href="{{CTA_LINK}}" class="buy-btn" style="font-size:1.15rem;padding:1.2rem 3.5rem">{{CTA_TEXT}}</a>
+    <p style="margin-top:1.5rem;color:rgba(255,255,255,.2);font-size:.85rem">السعر قابل للتغيير في أي وقت</p>
+  </div>
+</section>
+
+<footer>
+  <span>© {{YEAR}} {{SELLER_NAME}}</span>
+  <span style="color:rgba(255,107,107,.35)">⚡ {{GENERATED_BY}}</span>
+  <span>جميع الحقوق محفوظة</span>
+</footer>
+
+<script>
+  gsap.registerPlugin(ScrollTrigger);
+
+  // cursor
+  const cur=document.getElementById('cur'),ring=document.getElementById('curRing');
+  let mx=0,my=0,rx=0,ry=0;
+  document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px'});
+  (function anim(){rx+=(mx-rx)*.12;ry+=(my-ry)*.12;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(anim)})();
+  document.querySelectorAll('a').forEach(el=>{
+    el.addEventListener('mouseenter',()=>{cur.style.width='18px';cur.style.height='18px'});
+    el.addEventListener('mouseleave',()=>{cur.style.width='10px';cur.style.height='10px'});
+  });
+
+  // scroll dots
+  const slides=[document.getElementById('s0'),document.getElementById('s1'),document.getElementById('s2')];
+  const dots=document.querySelectorAll('.s-dot');
+  function goTo(i){slides[i].scrollIntoView({behavior:'smooth'})}
+  slides.forEach(s=>new IntersectionObserver(entries=>{
+    entries.forEach(e=>{if(e.isIntersecting){const i=slides.indexOf(e.target);dots.forEach(d=>d.classList.remove('on'));if(dots[i])dots[i].classList.add('on')}});
+  },{threshold:.5}).observe(s));
+
+  // GSAP
+  gsap.from(".s1-inner > *",{y:60,opacity:0,duration:.9,stagger:.2,ease:"power3.out"});
+  gsap.from(".bonus-card",{scrollTrigger:{trigger:"#s1",start:"top 80%"},y:60,opacity:0,duration:.8,stagger:.2,ease:"power3.out"});
+  gsap.from(".cta-content > *",{scrollTrigger:{trigger:"#s2",start:"top 80%"},y:40,opacity:0,duration:.8,stagger:.15,ease:"power3.out"});
+
+  // bonus card tilt
+  document.querySelectorAll('.bonus-card').forEach(el=>{
+    el.addEventListener('mousemove',e=>{
+      const r=el.getBoundingClientRect();
+      const x=(e.clientX-r.left)/r.width,y=(e.clientY-r.top)/r.height;
+      el.style.transform=`translateY(-10px) perspective(800px) rotateX(${(0.5-y)*12}deg) rotateY(${(x-0.5)*12}deg)`;
+    });
+    el.addEventListener('mouseleave',()=>{el.style.transform=''});
+  });
+</script>
+</body>
+</html>

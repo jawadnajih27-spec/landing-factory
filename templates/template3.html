@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>{{TITLE}}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <style>
+    :root{--p:#22c55e;--p2:#16a34a;--a:#38bdf8;--bg:#0f172a;--s:rgba(255,255,255,.08);--t:#f8fafc;--tm:#cbd5e1;--bd:rgba(255,255,255,.1)}
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Noto Kufi Arabic',sans-serif;background:var(--bg);color:var(--t);overflow-x:hidden;line-height:1.7}
+    a{text-decoration:none;color:inherit}
+
+    /* BG */
+    .bg-glow{position:fixed;inset:0;z-index:-1;
+      background:radial-gradient(circle at top right,rgba(56,189,248,.18),transparent 30%),
+      radial-gradient(circle at bottom left,rgba(34,197,94,.14),transparent 30%)}
+
+    /* NAV */
+    header{position:sticky;top:0;z-index:50;backdrop-filter:blur(16px);
+      background:rgba(15,23,42,.75);border-bottom:1px solid var(--bd)}
+    .nav{display:flex;align-items:center;justify-content:space-between;
+      padding:1.1rem 5%;gap:1.5rem;max-width:1200px;margin:0 auto}
+    .logo{font-size:1.35rem;font-weight:800;
+      background:linear-gradient(135deg,#fff,var(--p));
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .nav-links{display:flex;gap:1.75rem;align-items:center;flex-wrap:wrap}
+    .nav-links a{color:var(--tm);font-size:.9rem;transition:.3s}
+    .nav-links a:hover{color:#fff}
+    .btn{display:inline-block;padding:.7rem 1.5rem;border-radius:10px;font-weight:700;
+      transition:.3s ease;cursor:pointer;border:none;font-family:inherit;font-size:.9rem}
+    .btn-p{background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;
+      box-shadow:0 8px 24px rgba(34,197,94,.3)}
+    .btn-p:hover{transform:translateY(-2px);box-shadow:0 14px 32px rgba(34,197,94,.4)}
+    .btn-g{background:transparent;border:1px solid var(--bd);color:#fff}
+    .btn-g:hover{border-color:var(--p);background:rgba(34,197,94,.06)}
+
+    /* HERO */
+    .hero{padding:7rem 5% 5rem;max-width:1200px;margin:0 auto}
+    .hero-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:4rem;align-items:center}
+    .badge{display:inline-block;padding:.45rem 1.1rem;
+      background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.22);
+      border-radius:99px;color:#bae6fd;font-size:.82rem;margin-bottom:1.5rem}
+    .hero h1{font-size:clamp(2rem,4.5vw,3.8rem);line-height:1.2;margin-bottom:1.25rem;font-weight:900}
+    .hero p{color:var(--tm);font-size:1rem;margin-bottom:2rem;max-width:560px;line-height:1.85}
+    .hero-actions{display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:2rem}
+    .trust-row{display:flex;gap:1.5rem;flex-wrap:wrap;color:#e2e8f0;font-size:.88rem}
+
+    /* DASHBOARD MOCKUP */
+    .mockup{background:linear-gradient(180deg,rgba(255,255,255,.1),rgba(255,255,255,.04));
+      border:1px solid var(--bd);border-radius:22px;padding:1.25rem;
+      box-shadow:0 24px 60px rgba(0,0,0,.3)}
+    .screen{background:#020617;border-radius:16px;padding:1.1rem;border:1px solid rgba(255,255,255,.07)}
+    .screen-top{display:flex;gap:.5rem;margin-bottom:1rem}
+    .dot{width:11px;height:11px;border-radius:50%}
+    .dot.r{background:#ef4444}.dot.y{background:#f59e0b}.dot.g{background:#22c55e}
+    .chart{height:180px;border-radius:12px;
+      background:linear-gradient(180deg,rgba(34,197,94,.08),transparent),
+      repeating-linear-gradient(to top,rgba(255,255,255,.03) 0,rgba(255,255,255,.03) 1px,transparent 1px,transparent 36px);
+      position:relative;overflow:hidden}
+    .chart-line{position:absolute;inset:auto 0 16px 0;height:130px}
+    .chart-line svg{width:100%;height:100%}
+    .mockup-label{margin-top:1rem;color:var(--tm);font-size:.85rem;text-align:center}
+
+    /* FEATURES */
+    .features-sec{padding:5rem 5%;max-width:1200px;margin:0 auto}
+    .sec-hd{text-align:center;margin-bottom:3.5rem}
+    .sec-tag{font-size:.7rem;letter-spacing:4px;text-transform:uppercase;
+      color:var(--p);font-weight:700;margin-bottom:.6rem}
+    .sec-h{font-size:clamp(1.8rem,3.5vw,2.8rem);font-weight:900;margin-bottom:.75rem}
+    .sec-sub{color:var(--tm);max-width:620px;margin:0 auto;font-size:.95rem}
+    .feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
+    .feat-card{background:var(--s);border:1px solid var(--bd);border-radius:18px;
+      padding:2rem;transition:all .35s;cursor:default}
+    .feat-card:hover{transform:translateY(-6px);border-color:rgba(34,197,94,.3);
+      box-shadow:0 24px 50px rgba(0,0,0,.25)}
+    .feat-icon{width:52px;height:52px;border-radius:14px;margin-bottom:1.25rem;
+      background:linear-gradient(135deg,rgba(56,189,248,.15),rgba(34,197,94,.15));
+      display:flex;align-items:center;justify-content:center;font-size:1.4rem}
+    .feat-card h3{font-size:1.05rem;font-weight:800;margin-bottom:.5rem}
+    .feat-card p{color:var(--tm);font-size:.88rem;line-height:1.7}
+
+    /* PRICING */
+    .pricing-sec{padding:5rem 5%;max-width:1200px;margin:0 auto}
+    .pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
+    .price-card{background:var(--s);border:1px solid var(--bd);border-radius:18px;
+      padding:2rem;position:relative;transition:all .35s}
+    .price-card.feat{border-color:rgba(34,197,94,.45);transform:scale(1.03)}
+    .price-tag{position:absolute;top:1rem;left:1rem;background:var(--p);color:#fff;
+      padding:.3rem .9rem;border-radius:99px;font-size:.75rem;font-weight:700}
+    .price-val{font-size:2.2rem;font-weight:800;margin:1rem 0 .4rem}
+    .price-val small{font-size:.9rem;color:var(--tm);font-weight:400}
+    .price-desc{color:var(--tm);font-size:.88rem;margin-bottom:1rem;line-height:1.65}
+    .price-list{list-style:none;margin:1rem 0 1.5rem}
+    .price-list li{margin-bottom:.6rem;color:var(--tm);font-size:.88rem}
+    .price-list li::before{content:"✔ ";color:var(--p);font-weight:700}
+
+    /* TESTIMONIALS */
+    .test-sec{padding:5rem 5%;max-width:1200px;margin:0 auto}
+    .test-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
+    .test-card{background:var(--s);border:1px solid var(--bd);border-radius:18px;
+      padding:2rem;transition:all .35s}
+    .test-card:hover{transform:translateY(-5px);border-color:rgba(56,189,248,.25)}
+    .stars{color:#facc15;margin-bottom:.9rem;font-size:1rem}
+    .test-text{color:var(--tm);font-size:.9rem;line-height:1.75;margin-bottom:1rem}
+    .test-name{font-weight:700;font-size:.95rem}
+
+    /* CTA FINAL */
+    .cta-final{padding:5rem 5%;max-width:900px;margin:0 auto}
+    .cta-box{text-align:center;padding:4.5rem 3rem;
+      background:linear-gradient(135deg,rgba(56,189,248,.12),rgba(34,197,94,.12));
+      border:1px solid var(--bd);border-radius:24px;
+      box-shadow:0 24px 60px rgba(0,0,0,.2);position:relative;overflow:hidden}
+    .cta-box::before{content:'';position:absolute;inset:0;
+      background:radial-gradient(circle at 50% 0%,rgba(34,197,94,.12),transparent 65%)}
+    .cta-box h2{font-size:clamp(1.8rem,3.5vw,2.8rem);font-weight:900;margin-bottom:1rem;position:relative;z-index:1}
+    .cta-box p{color:var(--tm);max-width:600px;margin:0 auto 2rem;position:relative;z-index:1;font-size:.95rem}
+
+    footer{padding:2.5rem 5%;text-align:center;border-top:1px solid rgba(255,255,255,.05);
+      color:var(--tm);font-size:.82rem;max-width:1200px;margin:0 auto}
+    .ft-logo{font-weight:900;font-size:1.35rem;margin-bottom:.6rem;
+      background:linear-gradient(135deg,#fff,var(--p));
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+    @media(max-width:992px){
+      .hero-grid,.feat-grid,.pricing-grid,.test-grid{grid-template-columns:1fr}
+      .price-card.feat{transform:none}
+      .hero{padding:5rem 5% 3rem}
+      .nav-links{display:none}
+    }
+  </style>
+</head>
+<body>
+<div class="bg-glow"></div>
+
+<header>
+  <div class="nav">
+    <div class="logo">{{FOOTER_NAME}}</div>
+    <nav class="nav-links">
+      <a href="#features">المميزات</a>
+      <a href="#pricing">الأسعار</a>
+      <a href="#testimonials">آراء العملاء</a>
+    </nav>
+    <a href="{{CTA_LINK}}" class="btn btn-p">{{CTA_TEXT}}</a>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="hero-grid">
+      <div>
+        <div class="badge">🚀 {{HERO_TITLE}}</div>
+        <h1>{{HERO_TITLE}}</h1>
+        <p>{{HERO_SUB}}</p>
+        <div class="hero-actions">
+          <a href="{{CTA_LINK}}" class="btn btn-p">{{CTA_TEXT}}</a>
+          <a href="#features" class="btn btn-g">اكتشف المزيد</a>
+        </div>
+        <div class="trust-row">
+          <span>✅ {{FEATURE_1}}</span>
+          <span>✅ {{FEATURE_2}}</span>
+          <span>✅ {{FEATURE_3}}</span>
+        </div>
+      </div>
+      <div class="mockup">
+        <div class="screen">
+          <div class="screen-top">
+            <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+          </div>
+          <div class="chart">
+            <div class="chart-line">
+              <svg viewBox="0 0 500 130" preserveAspectRatio="none">
+                <polyline fill="none" stroke="#22c55e" stroke-width="3.5"
+                  points="0,115 60,105 120,88 180,95 240,62 300,68 360,32 420,48 500,10"/>
+                <polyline fill="none" stroke="#38bdf8" stroke-width="2.5" opacity=".7"
+                  points="0,120 60,112 120,100 180,108 240,82 300,88 360,65 420,75 500,45"/>
+              </svg>
+            </div>
+          </div>
+          <div class="mockup-label">لوحة تحكم تفاعلية — نمو الأداء والمبيعات</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="features-sec" id="features">
+    <div class="sec-hd">
+      <div class="sec-tag">المميزات</div>
+      <h2 class="sec-h">لماذا هذا المنتج؟</h2>
+      <p class="sec-sub">كل ما تحتاجه في مكان واحد مع تجربة استخدام ممتازة.</p>
+    </div>
+    <div class="feat-grid">
+      <div class="feat-card">
+        <div class="feat-icon">⚡</div>
+        <h3>{{FEATURE_1}}</h3>
+        <p>واجهة بسيطة وسريعة تساعدك على تنفيذ مهامك خلال دقائق بدلاً من ساعات.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">📈</div>
+        <h3>{{FEATURE_2}}</h3>
+        <p>تابع أداءك واعرف سلوك المستخدمين لاتخاذ قرارات أفضل تعتمد على البيانات.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🔒</div>
+        <h3>{{FEATURE_3}}</h3>
+        <p>نظام حماية متقدم ونسخ احتياطي دوري للحفاظ على بياناتك دائماً.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="pricing-sec" id="pricing">
+    <div class="sec-hd">
+      <div class="sec-tag">الأسعار</div>
+      <h2 class="sec-h">خطط مرنة لكل احتياج</h2>
+      <p class="sec-sub">اختر الخطة التي تناسب حجم عملك وابدأ في التوسع بثقة.</p>
+    </div>
+    <div class="pricing-grid">
+      <div class="price-card">
+        <h3>الخطة الأساسية</h3>
+        <div class="price-val">{{PRICE}} <small>/ شهرياً</small></div>
+        <p class="price-desc">مناسبة للمبتدئين وأصحاب المشاريع الصغيرة.</p>
+        <ul class="price-list"><li>{{FEATURE_1}}</li><li>دعم عبر البريد</li><li>تقارير أساسية</li></ul>
+        <a href="{{CTA_LINK}}" class="btn btn-g" style="width:100%;text-align:center;display:block">اختر هذه الخطة</a>
+      </div>
+      <div class="price-card feat">
+        <div class="price-tag">الأكثر طلباً</div>
+        <h3>الخطة الاحترافية</h3>
+        <div class="price-val">{{PRICE}} <small>/ شهرياً</small></div>
+        <p class="price-desc">الأفضل للشركات الناشئة وصنّاع المحتوى.</p>
+        <ul class="price-list"><li>{{FEATURE_1}}</li><li>{{FEATURE_2}}</li><li>{{FEATURE_3}}</li><li>دعم فني سريع</li></ul>
+        <a href="{{CTA_LINK}}" class="btn btn-p" style="width:100%;text-align:center;display:block">{{CTA_TEXT}}</a>
+      </div>
+      <div class="price-card">
+        <h3>خطة الشركات</h3>
+        <div class="price-val">{{PRICE}} <small>/ شهرياً</small></div>
+        <p class="price-desc">للشركات التي تحتاج إلى توسع وأدوات أكثر احترافية.</p>
+        <ul class="price-list"><li>{{FEATURE_1}}</li><li>{{FEATURE_2}}</li><li>دعم أولوية</li><li>تكاملات خاصة</li></ul>
+        <a href="{{CTA_LINK}}" class="btn btn-g" style="width:100%;text-align:center;display:block">تواصل معنا</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="test-sec" id="testimonials">
+    <div class="sec-hd">
+      <div class="sec-tag">آراء العملاء</div>
+      <h2 class="sec-h">ماذا يقول عملاؤنا؟</h2>
+      <p class="sec-sub">آراء حقيقية من مستخدمين استفادوا من المنتج.</p>
+    </div>
+    <div class="test-grid">
+      <div class="test-card">
+        <div class="stars">★★★★★</div>
+        <p class="test-text">ساعدني هذا المنتج على تنظيم مبيعاتي وتوفير وقت كبير في إدارة الطلبات.</p>
+        <div class="test-name">أحمد خالد</div>
+      </div>
+      <div class="test-card">
+        <div class="stars">★★★★★</div>
+        <p class="test-text">التصميم ممتاز وسهل جداً، والدعم الفني كان سريعاً عندما احتجت للمساعدة.</p>
+        <div class="test-name">سارة علي</div>
+      </div>
+      <div class="test-card">
+        <div class="stars">★★★★★</div>
+        <p class="test-text">من أفضل الأدوات التي استخدمتها لإطلاق منتجي ومتابعة الأداء بشكل يومي.</p>
+        <div class="test-name">محمد سمير</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-final">
+    <div class="cta-box">
+      <h2>جاهز لإطلاق مشروعك؟ 🚀</h2>
+      <p>ابدأ اليوم واستفد من كل الأدوات التي تحتاجها للنمو السريع.</p>
+      <a href="{{CTA_LINK}}" class="btn btn-p" style="font-size:1rem;padding:.9rem 2.5rem">{{CTA_TEXT}}</a>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="ft-logo">{{FOOTER_NAME}}</div>
+  <p>© {{YEAR}} جميع الحقوق محفوظة · أُنشئت بـ ⚡ {{GENERATED_BY}}</p>
+</footer>
+
+<script>
+  gsap.registerPlugin(ScrollTrigger);
+  gsap.from(".hero-grid > *",{y:60,opacity:0,duration:.9,stagger:.2,ease:"power3.out"});
+  gsap.from(".feat-card",{scrollTrigger:{trigger:".features-sec",start:"top 80%"},y:60,opacity:0,duration:.8,stagger:.12,ease:"power3.out"});
+  gsap.from(".price-card",{scrollTrigger:{trigger:".pricing-sec",start:"top 80%"},y:60,opacity:0,duration:.8,stagger:.12,ease:"power3.out"});
+  gsap.from(".test-card",{scrollTrigger:{trigger:".test-sec",start:"top 80%"},y:50,opacity:0,duration:.7,stagger:.12,ease:"power3.out"});
+  gsap.from(".cta-box",{scrollTrigger:{trigger:".cta-final",start:"top 80%"},scale:.93,opacity:0,duration:1,ease:"power3.out"});
+
+  // card tilt
+  [...document.querySelectorAll('.feat-card,.price-card,.test-card')].forEach(el=>{
+    el.addEventListener('mousemove',e=>{
+      const r=el.getBoundingClientRect(),x=(e.clientX-r.left)/r.width,y=(e.clientY-r.top)/r.height;
+      el.style.transform=`translateY(-6px) perspective(700px) rotateX(${(0.5-y)*8}deg) rotateY(${(x-0.5)*8}deg)`;
+    });
+    el.addEventListener('mouseleave',()=>{el.style.transform=''});
+  });
+</script>
+</body>
+</html>
