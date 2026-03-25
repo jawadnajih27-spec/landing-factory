@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>مصنع صفحات الهبوط ⚡</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #09090f;
+      --surface: #111118;
+      --surface2: #1a1a26;
+      --border: #2a2a3d;
+      --accent: #6c63ff;
+      --accent2: #ff6b6b;
+      --accent3: #00d9a0;
+      --text: #e8e8f0;
+      --muted: #8888aa;
+      --glow: 0 0 30px rgba(108,99,255,0.25);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Cairo', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    /* animated background */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 60% 50% at 80% 10%, rgba(108,99,255,0.12) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 40% at 10% 90%, rgba(0,217,160,0.07) 0%, transparent 60%);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .grid-bg {
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(108,99,255,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(108,99,255,0.04) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .content { position: relative; z-index: 1; }
+
+    /* HEADER */
+    .header {
+      border-bottom: 1px solid var(--border);
+      background: rgba(9,9,15,0.85);
+      backdrop-filter: blur(20px);
+      position: sticky; top: 0; z-index: 50;
+    }
+    .logo-badge {
+      background: linear-gradient(135deg, var(--accent), #9b8cff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-weight: 900;
+      font-size: 1.5rem;
+      letter-spacing: -0.5px;
+    }
+    .status-dot {
+      width: 8px; height: 8px;
+      background: var(--accent3);
+      border-radius: 50%;
+      animation: pulse-dot 2s infinite;
+    }
+    @keyframes pulse-dot {
+      0%,100% { box-shadow: 0 0 0 0 rgba(0,217,160,0.5); }
+      50% { box-shadow: 0 0 0 6px rgba(0,217,160,0); }
+    }
+
+    /* CARDS */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    .card:hover { border-color: rgba(108,99,255,0.4); box-shadow: var(--glow); }
+    .card-title {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--accent);
+    }
+
+    /* STEPS */
+    .step-num {
+      width: 32px; height: 32px;
+      background: linear-gradient(135deg, var(--accent), #9b8cff);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 900; font-size: 0.85rem;
+      flex-shrink: 0;
+      box-shadow: 0 0 16px rgba(108,99,255,0.4);
+    }
+
+    /* INPUTS */
+    .inp {
+      width: 100%;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.65rem 1rem;
+      color: var(--text);
+      font-family: 'Cairo', sans-serif;
+      font-size: 0.9rem;
+      transition: border-color 0.25s, box-shadow 0.25s;
+      outline: none;
+    }
+    .inp:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(108,99,255,0.15);
+    }
+    .inp::placeholder { color: var(--muted); }
+    textarea.inp { resize: vertical; min-height: 80px; }
+    label { font-size: 0.82rem; color: var(--muted); font-weight: 600; margin-bottom: 4px; display: block; }
+
+    /* TEMPLATE CARDS */
+    .tpl-card {
+      cursor: pointer;
+      background: var(--surface2);
+      border: 2px solid var(--border);
+      border-radius: 14px;
+      padding: 1.25rem;
+      transition: all 0.25s;
+      position: relative;
+      overflow: hidden;
+    }
+    .tpl-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, var(--accent), var(--accent3));
+      opacity: 0;
+      transition: opacity 0.25s;
+    }
+    .tpl-card:hover::before { opacity: 0.05; }
+    .tpl-card.selected {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(108,99,255,0.2), var(--glow);
+    }
+    .tpl-card.selected::before { opacity: 0.08; }
+    .tpl-preview {
+      width: 100%; height: 80px;
+      border-radius: 8px;
+      background: var(--surface);
+      margin-bottom: 0.75rem;
+      overflow: hidden;
+      position: relative;
+    }
+    .check-badge {
+      position: absolute; top: 8px; left: 8px;
+      width: 22px; height: 22px;
+      background: var(--accent);
+      border-radius: 50%;
+      display: none; align-items: center; justify-content: center;
+      font-size: 0.7rem;
+    }
+    .tpl-card.selected .check-badge { display: flex; }
+
+    /* BUTTON */
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent) 0%, #9b8cff 100%);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      padding: 0.85rem 2rem;
+      font-family: 'Cairo', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.25s;
+      display: flex; align-items: center; gap: 0.5rem;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-primary::after {
+      content: '';
+      position: absolute;
+      top: 50%; left: 50%;
+      width: 0; height: 0;
+      background: rgba(255,255,255,0.15);
+      border-radius: 50%;
+      transform: translate(-50%,-50%);
+      transition: width 0.4s, height 0.4s;
+    }
+    .btn-primary:hover::after { width: 200px; height: 200px; }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(108,99,255,0.4); }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    .btn-sm {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      border-radius: 8px;
+      padding: 0.4rem 0.9rem;
+      font-family: 'Cairo', sans-serif;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-sm:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* PROGRESS */
+    .progress-bar {
+      height: 3px;
+      background: var(--border);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent3));
+      border-radius: 99px;
+      transition: width 0.4s ease;
+    }
+
+    /* LOG */
+    .log-area {
+      background: #060609;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      max-height: 200px;
+      overflow-y: auto;
+      color: var(--muted);
+    }
+    .log-line { margin-bottom: 4px; display: flex; gap: 8px; }
+    .log-ok { color: var(--accent3); }
+    .log-err { color: var(--accent2); }
+    .log-info { color: var(--accent); }
+    .log-time { color: #444; flex-shrink: 0; }
+
+    /* RESULT */
+    .result-card {
+      background: linear-gradient(135deg, rgba(0,217,160,0.08), rgba(108,99,255,0.08));
+      border: 1px solid rgba(0,217,160,0.3);
+      border-radius: 16px;
+      padding: 1.5rem;
+      display: none;
+    }
+    .result-card.show { display: block; animation: slideUp 0.4s ease; }
+    @keyframes slideUp {
+      from { opacity:0; transform:translateY(20px); }
+      to { opacity:1; transform:translateY(0); }
+    }
+
+    /* TOAST */
+    #toast {
+      position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(100px);
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 0.75rem 1.5rem;
+      font-size: 0.875rem;
+      transition: transform 0.3s, opacity 0.3s;
+      opacity: 0; z-index: 999;
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+    #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+    /* TOKEN visibility */
+    .token-wrap { position: relative; }
+    .token-toggle {
+      position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
+      background: none; border: none; cursor: pointer;
+      color: var(--muted); font-size: 0.85rem;
+      transition: color 0.2s;
+    }
+    .token-toggle:hover { color: var(--text); }
+
+    /* scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+    /* section separator */
+    .section-line {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border), transparent);
+      margin: 0.5rem 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="grid-bg"></div>
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="content px-6 py-4 flex items-center justify-between max-w-5xl mx-auto">
+      <div class="flex items-center gap-3">
+        <span class="logo-badge">⚡ مصنع صفحات الهبوط</span>
+        <span class="text-xs px-2 py-0.5 rounded-full" style="background:rgba(108,99,255,0.15);color:var(--accent);border:1px solid rgba(108,99,255,0.3)">v1.0</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <div class="status-dot"></div>
+        <span class="text-xs" style="color:var(--muted)" id="statusText">محلي · بدون خادم</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <main class="content max-w-5xl mx-auto px-6 py-8">
+
+    <!-- Hero hint -->
+    <div class="mb-8 text-center">
+      <h1 class="text-3xl font-black mb-2" style="background:linear-gradient(135deg,#e8e8f0,#8888aa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">
+        أنشئ صفحة هبوطك خلال 60 ثانية
+      </h1>
+      <p style="color:var(--muted);font-size:0.9rem">اختر قالبًا → أدخل بياناتك → انشر على GitHub Pages مجاناً</p>
+    </div>
+
+    <!-- PROGRESS STEPS -->
+    <div class="mb-8 grid grid-cols-4 gap-2">
+      <div class="step-indicator text-center" data-step="1">
+        <div class="step-num mx-auto mb-1">1</div>
+        <div class="text-xs" style="color:var(--muted)">GitHub</div>
+      </div>
+      <div class="step-indicator text-center" data-step="2">
+        <div class="step-num mx-auto mb-1" style="background:var(--surface2);box-shadow:none;border:1px solid var(--border)">2</div>
+        <div class="text-xs" style="color:var(--muted)">القالب</div>
+      </div>
+      <div class="step-indicator text-center" data-step="3">
+        <div class="step-num mx-auto mb-1" style="background:var(--surface2);box-shadow:none;border:1px solid var(--border)">3</div>
+        <div class="text-xs" style="color:var(--muted)">المحتوى</div>
+      </div>
+      <div class="step-indicator text-center" data-step="4">
+        <div class="step-num mx-auto mb-1" style="background:var(--surface2);box-shadow:none;border:1px solid var(--border)">4</div>
+        <div class="text-xs" style="color:var(--muted)">النشر</div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 gap-6">
+
+      <!-- STEP 1: GitHub Settings -->
+      <div class="card p-6" id="step1Card">
+        <div class="flex items-center gap-3 mb-5">
+          <div class="step-num">1</div>
+          <div>
+            <div class="card-title">إعدادات GitHub</div>
+            <div class="text-sm" style="color:var(--muted)">أدخل بيانات حسابك للتحقق والنشر</div>
+          </div>
+          <button class="btn-sm mr-auto" id="testAuthBtn" onclick="testAuth()">🔗 تحقق</button>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label>اسم المستخدم (Username)</label>
+            <input class="inp" type="text" id="ghUsername" placeholder="octocat" />
+          </div>
+          <div>
+            <label>Personal Access Token (PAT)</label>
+            <div class="token-wrap">
+              <input class="inp" type="password" id="ghToken" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" style="padding-left:2.5rem" />
+              <button class="token-toggle" onclick="toggleToken()" id="tokenToggleBtn">👁</button>
+            </div>
+            <div class="text-xs mt-1" style="color:var(--muted)">
+              يُحفظ في LocalStorage — لا يُرسل لأي خادم خارجي
+              <a href="https://github.com/settings/tokens/new?scopes=repo,workflow" target="_blank" class="mr-1" style="color:var(--accent)">← أنشئ توكن</a>
+            </div>
+          </div>
+          <div>
+            <label>اسم المستودع الجديد</label>
+            <input class="inp" type="text" id="ghRepo" placeholder="my-landing-page" oninput="sanitizeRepoName(this)" />
+          </div>
+          <div>
+            <label>وصف المستودع (اختياري)</label>
+            <input class="inp" type="text" id="ghDesc" placeholder="صفحة هبوط رائعة" />
+          </div>
+        </div>
+        <div class="mt-3 p-3 rounded-lg text-sm hidden" id="authStatus" style="background:rgba(0,217,160,0.08);border:1px solid rgba(0,217,160,0.25);color:var(--accent3)"></div>
+      </div>
+
+      <!-- STEP 2: Template Selection -->
+      <div class="card p-6" id="step2Card">
+        <div class="flex items-center gap-3 mb-5">
+          <div class="step-num" style="background:var(--surface2);box-shadow:none;border:1px solid var(--border)">2</div>
+          <div>
+            <div class="card-title">اختر القالب</div>
+            <div class="text-sm" style="color:var(--muted)">اختر تصميم صفحة الهبوط المناسب</div>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-4" id="templatesGrid">
+          <!-- populated by JS -->
+        </div>
+      </div>
+
+      <!-- STEP 3: Page Content -->
+      <div class="card p-6" id="step3Card">
+        <div class="flex items-center gap-3 mb-5">
+          <div class="step-num" style="background:var(--surface2);box-shadow:none;border:1px solid var(--border)">3</div>
+          <div>
+            <div class="card-title">محتوى الصفحة</div>
+            <div class="text-sm" style="color:var(--muted)">الحقول تتغير بناءً على القالب المختار</div>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="fieldsGrid">
+          <div class="col-span-full flex flex-col items-center py-8" style="color:var(--muted)">
+            <span style="font-size:2rem">👆</span>
+            <span class="text-sm mt-2">اختر قالبًا أولاً</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 4: Deploy -->
+      <div class="card p-6" id="step4Card">
+        <div class="flex items-center gap-3 mb-5">
+          <div class="step-num" style="background:var(--surface2);box-shadow:none;border:1px solid var(--border)">4</div>
+          <div>
+            <div class="card-title">النشر على GitHub Pages</div>
+            <div class="text-sm" style="color:var(--muted)">مراجعة وإطلاق الصفحة</div>
+          </div>
+        </div>
+
+        <!-- Preview summary -->
+        <div class="mb-4 p-4 rounded-xl" style="background:var(--surface2);border:1px solid var(--border)" id="previewSummary">
+          <div class="text-xs mb-2" style="color:var(--muted);letter-spacing:1px;text-transform:uppercase;font-weight:700">ملخص قبل النشر</div>
+          <div class="grid grid-cols-2 gap-2 text-sm" id="summaryContent" style="color:var(--muted)">
+            <span>لم يتم ملء البيانات بعد</span>
+          </div>
+        </div>
+
+        <!-- Progress bar -->
+        <div class="progress-bar mb-4 hidden" id="progressWrap">
+          <div class="progress-fill" id="progressFill" style="width:0%"></div>
+        </div>
+
+        <!-- Log -->
+        <div class="log-area mb-4 hidden" id="logArea"></div>
+
+        <!-- Main button -->
+        <button class="btn-primary w-full text-lg" id="deployBtn" onclick="deploy()">
+          <span>🚀</span>
+          <span>أنشئ الصفحة واطبعها على GitHub</span>
+        </button>
+
+        <!-- Result -->
+        <div class="result-card mt-5" id="resultCard">
+          <div class="flex items-center gap-2 mb-3">
+            <span>🎉</span>
+            <span class="font-bold" style="color:var(--accent3)">تم النشر بنجاح!</span>
+          </div>
+          <div class="text-sm mb-3" style="color:var(--muted)">قد تحتاج GitHub Pages من 1-3 دقائق للتفعيل.</div>
+          <div class="flex gap-2 flex-wrap">
+            <a id="pagesLink" href="#" target="_blank" class="btn-primary" style="flex:1;text-decoration:none;min-width:160px">
+              🌐 فتح الصفحة
+            </a>
+            <a id="repoLink" href="#" target="_blank" class="btn-sm" style="display:flex;align-items:center;gap:4px;text-decoration:none">
+              📁 المستودع
+            </a>
+            <button class="btn-sm" onclick="resetAll()">🔄 صفحة جديدة</button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /grid -->
+  </main>
+
+  <div id="toast">📋 <span id="toastMsg"></span></div>
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
