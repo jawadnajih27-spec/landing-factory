@@ -1,5 +1,8 @@
-// app.js — المنطق الرئيسي لمصنع صفحات الهبوط
-// Vanilla JS · No dependencies · Backend-less
+# Create a fixed app.js that handles inline templates properly
+# and fixes the variable replacement issue
+
+app_js_fixed = '''// app.js — المنطق الرئيسي لمصنع صفحات الهبوط (محسّن)
+// يدعم القوالب المضمنة inline لتجنب مشاكل المسارات
 
 // ─── STATE ───────────────────────────────────────────────────────────────────
 const state = {
@@ -49,8 +52,7 @@ function toggleToken() {
 
 // ─── REPO NAME SANITIZE ───────────────────────────────────────────────────────
 function sanitizeRepoName(input) {
-  // GitHub repo names: letters, numbers, hyphens, underscores, dots
-  input.value = input.value.replace(/[^a-zA-Z0-9\-_.]/g, "-").replace(/^-+/, "");
+  input.value = input.value.replace(/[^a-zA-Z0-9\\-_.]/g, "-").replace(/^-+/, "");
 }
 
 // ─── AUTH TEST ────────────────────────────────────────────────────────────────
@@ -95,6 +97,8 @@ async function testAuth() {
 // ─── TEMPLATES ────────────────────────────────────────────────────────────────
 function renderTemplates() {
   const grid = document.getElementById("templatesGrid");
+  if (!grid) return;
+  
   grid.innerHTML = CONFIG.templates.map((tpl, i) => `
     <div class="tpl-card" id="tpl_${tpl.id}" onclick="selectTemplate('${tpl.id}')">
       <div class="check-badge">✓</div>
@@ -129,6 +133,8 @@ function selectTemplate(id) {
 // ─── FIELDS ───────────────────────────────────────────────────────────────────
 function renderFields(tpl) {
   const grid = document.getElementById("fieldsGrid");
+  if (!grid || !tpl) return;
+  
   grid.innerHTML = tpl.fields.map(f => {
     const value = state.fieldValues[f.key] || "";
     if (f.type === "textarea") {
@@ -154,6 +160,8 @@ function onFieldChange(key, value) {
 // ─── SUMMARY ──────────────────────────────────────────────────────────────────
 function updateSummary() {
   const summaryEl = document.getElementById("summaryContent");
+  if (!summaryEl) return;
+  
   const tpl = CONFIG.templates.find(t => t.id === state.selectedTemplate);
   const username = document.getElementById("ghUsername").value.trim();
   const repo     = document.getElementById("ghRepo").value.trim();
@@ -223,9 +231,9 @@ async function deploy() {
   saveCredentials();
 
   try {
-    // Step 1: Load template
+    // Step 1: Get template HTML (inline or from file)
     log("info", "تحميل القالب...");
-    const templateHTML = await loadTemplate(tpl.file);
+    let templateHTML = tpl.html || await loadTemplate(tpl.file);
     setProgress(15);
 
     // Step 2: Replace variables
@@ -280,9 +288,16 @@ async function deploy() {
 
 // ─── TEMPLATE LOADER ─────────────────────────────────────────────────────────
 async function loadTemplate(filePath) {
-  const res = await fetch(filePath);
-  if (!res.ok) throw new Error(`لم يمكن تحميل القالب: ${filePath}`);
-  return await res.text();
+  try {
+    const res = await fetch(filePath);
+    if (!res.ok) throw new Error(`لم يمكن تحميل القالب: ${filePath}`);
+    return await res.text();
+  } catch (e) {
+    // Fallback to inline template if fetch fails
+    const tpl = CONFIG.templates.find(t => t.file === filePath);
+    if (tpl && tpl.html) return tpl.html;
+    throw e;
+  }
 }
 
 // ─── VARIABLE REPLACER ────────────────────────────────────────────────────────
@@ -295,11 +310,12 @@ function replaceVariables(html, values, username, repo) {
     result = result.replace(regex, escapeHtml(val));
   });
 
-  // Replace system variables
-  result = result.replace(/{{GH_USERNAME}}/g, username);
-  result = result.replace(/{{GH_REPO}}/g, repo);
-  result = result.replace(/{{YEAR}}/g, new Date().getFullYear());
+  // Replace system variables with defaults if not provided
+  const year = new Date().getFullYear();
+  result = result.replace(/{{YEAR}}/g, year);
   result = result.replace(/{{GENERATED_BY}}/g, "مصنع صفحات الهبوط");
+  result = result.replace(/{{GH_USERNAME}}/g, username || "");
+  result = result.replace(/{{GH_REPO}}/g, repo || "");
 
   // Remove any unreplaced placeholders
   result = result.replace(/{{[A-Z_]+}}/g, "");
@@ -348,7 +364,6 @@ async function createRepo(token, name, description) {
 }
 
 async function uploadFile(token, username, repo, filePath, content) {
-  // Wait a moment for repo to initialize
   await sleep(1500);
   const encoded = btoa(unescape(encodeURIComponent(content)));
   return await ghRequest("PUT", `repos/${username}/${repo}/contents/${filePath}`, {
@@ -364,14 +379,11 @@ async function enablePages(token, username, repo) {
       source: { branch: "main", path: "/" }
     }, token);
   } catch (e) {
-    // GitHub Pages might already be enabled or need a moment
-    // Try updating instead
     try {
       return await ghRequest("PUT", `repos/${username}/${repo}/pages`, {
         source: { branch: "main", path: "/" }
       }, token);
     } catch {
-      // Pages will be available even if API returns an error sometimes
       log("info", "ملاحظة: تفعيل Pages سيكتمل خلال لحظات");
     }
   }
@@ -444,7 +456,6 @@ function resetAll() {
   btn.disabled = false;
   btn.innerHTML = `<span>🚀</span> <span>أنشئ الصفحة واطبعها على GitHub</span>`;
 
-  // Clear repo name for new page
   document.getElementById("ghRepo").value = "";
   document.getElementById("ghDesc").value = "";
 
@@ -458,3 +469,10 @@ function resetAll() {
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
+'''
+
+with open('/mnt/kimi/output/enhanced_templates/app_fixed.js', 'w', encoding='utf-8') as f:
+    f.write(app_js_fixed)
+
+print("✅ Created fixed app.js with inline template support!")
+
