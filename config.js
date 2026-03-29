@@ -82,6 +82,63 @@ const CONFIG = {
         { key:"EMAIL",     label:"البريد الإلكتروني",       type:"email",    placeholder:"me@example.com",           required:true  },
       ]
     },
+    { 
+
+id: "physical_store", 
+
+name: "متجر منتج مادي — Royal COD", 
+
+description: "منتج واحد · طلب واتساب · دفع عند الاستلام", 
+
+emoji: "🛍️", 
+
+color: "#e11d48", 
+
+file: "templates/template5.html", 
+
+fields: [ 
+
+{ key:"TITLE", label:"عنوان التبويب", type:"text", placeholder:"المنتج ✦", required:true }, 
+{ key:"BRAND_NAME", label:"اسم العلامة التجارية", type:"text", placeholder:"Royal Store", required:true }, 
+{ key:"BADGE", label:"شارة البطل", type:"text", placeholder:"🔥 الأكثر مبيعاً", required:true }, 
+{ key:"CATEGORY", label:"تصنيف المنتج", type:"text", placeholder:"ملابس · أزياء راقية", required:true }, 
+{ key:"PRODUCT_NAME", label:"اسم المنتج", type:"text", placeholder:"اسم المنتج هنا", required:true }, 
+{ key:"PRODUCT_DESC", label:"وصف قصير", type:"textarea", placeholder:"وصف مختصر وجذاب...", required:true }, 
+{ key:"REVIEWS_COUNT", label:"عدد التقييمات", type:"text", placeholder:"127", required:true }, 
+{ key:"SOLD_COUNT", label:"عدد الطلبات", type:"text", placeholder:"340", required:true }, 
+{ key:"PRICE", label:"السعر الحالي", type:"text", placeholder:"299", required:true }, 
+{ key:"OLD_PRICE", label:"السعر قبل الخصم", type:"text", placeholder:"499", required:true }, 
+{ key:"SAVE_TEXT", label:"نص التوفير", type:"text", placeholder:"وفّر 200 د.م — خصم 40%", required:true }, 
+{ key:"WHATSAPP", label:"رقم الواتساب", type:"text", placeholder:"966500000000", required:true }, 
+] 
+}, 
+{ 
+
+id: "digital_offer", 
+
+name: "منتج رقمي — Royal Premium", 
+
+description: "عرض رقمي فاخر · هيرو تحويلي + تسعير + FAQ", 
+
+emoji: "✨", 
+
+color: "#a855f7", 
+
+file: "templates/template6.html", 
+
+fields: [ 
+
+{ key:"TITLE", label:"عنوان التبويب", type:"text", placeholder:"المنتج الرقمي ✦", required:true }, 
+{ key:"BRAND_NAME", label:"اسم العلامة التجارية", type:"text", placeholder:"Royal Digital", required:true }, 
+{ key:"BADGE", label:"شارة البطل", type:"text", placeholder:"منتج رقمي حصري", required:true }, 
+{ key:"PRODUCT_NAME", label:"اسم المنتج", type:"text", placeholder:"اسم المنتج الرقمي", required:true }, 
+{ key:"PRODUCT_DESC", label:"وصف المنتج", type:"textarea", placeholder:"وصف المنتج يظهر هنا...", required:true }, 
+{ key:"PRICE", label:"السعر الحالي", type:"text", placeholder:"299", required:true }, 
+{ key:"OLD_PRICE", label:"السعر قبل الخصم", type:"text", placeholder:"499", required:true }, 
+{ key:"DISCOUNT_TEXT", label:"نص الخصم", type:"text", placeholder:"وفّر 40%", required:true }, 
+
+] 
+
     {
       id: "luxury",
       name: "فاخر متعدد الأغراض 👑",
