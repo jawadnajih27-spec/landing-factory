@@ -9,6 +9,38 @@ const state = {
   lastDeployedUrl: null
 };
 
+const FALLBACK_TEMPLATES = [ 
+
+{ id:"saas", name:"SaaS", description:"قالب احتياطي", emoji:"🚀", color:"#6d28d9", file:"templates/template1.html", fields:[] }, 
+
+{ id:"product", name:"منتج رقمي", description:"قالب احتياطي", emoji:"💎", color:"#ff6b6b", file:"templates/template2.html", fields:[] }, 
+
+{ id:"platform", name:"منصة SaaS", description:"قالب احتياطي", emoji:"📊", color:"#22c55e", file:"templates/template3.html", fields:[] }, 
+
+{ id:"service", name:"خدمة مستقلة", description:"قالب احتياطي", emoji:"⚡", color:"#00e5a0", file:"templates/template4.html", fields:[] }, 
+
+{ id:"physical_store", name:"متجر منتج مادي", description:"قالب احتياطي", emoji:"🛍️", color:"#e11d48", file:"templates/template5.html", fields:[] }, 
+
+{ id:"digital_offer", name:"منتج رقمي فاخر", description:"قالب احتياطي", emoji:"✨", color:"#a855f7", file:"templates/template6.html", fields:[] } 
+
+]; 
+
+function getTemplates() { 
+
+if (typeof CONFIG === "undefined" || !Array.isArray(CONFIG.templates) || !CONFIG.templates.length) { 
+
+console.warn("CONFIG.templates غير متاح — سيتم استخدام قوالب احتياطية."); 
+
+return FALLBACK_TEMPLATES; 
+
+} 
+
+return CONFIG.templates; 
+
+} 
+
+
+
 // ─── INIT ─────────────────────────────────────────────────────────────────────
 document.addEventListener("DOMContentLoaded", () => {
   loadSavedCredentials();
@@ -72,7 +104,7 @@ async function testAuth() {
 // ─── TEMPLATES ────────────────────────────────────────────────────────────────
 function renderTemplates() {
   const grid = document.getElementById("templatesGrid");
-  grid.innerHTML = CONFIG.templates.map(tpl => `
+  grid.innerHTML = getTemplates().map(tpl => `
     <div class="tpl-card" id="tpl_${tpl.id}" onclick="selectTemplate('${tpl.id}')">
       <div class="check-badge">✓</div>
       <div class="tpl-preview" style="background:linear-gradient(135deg,${tpl.color}22,${tpl.color}08);display:flex;align-items:center;justify-content:center;font-size:2.5rem">
@@ -91,7 +123,7 @@ function selectTemplate(id) {
   state.imageData   = {};
   document.querySelectorAll(".tpl-card").forEach(c => c.classList.remove("selected"));
   document.getElementById(`tpl_${id}`).classList.add("selected");
-  const tpl = CONFIG.templates.find(t => t.id === id);
+  const tpl = getTemplates().find(t => t.id === id);
   renderFields(tpl);
   updateStepIndicators(3);
   updateSummary();
@@ -189,7 +221,7 @@ function removeImage(key) {
 // ─── SUMMARY ──────────────────────────────────────────────────────────────────
 function updateSummary() {
   const el  = document.getElementById("summaryContent");
-  const tpl = CONFIG.templates.find(t => t.id === state.selectedTemplate);
+const tpl = getTemplates().find(t => t.id === state.selectedTemplate);
   const username = document.getElementById("ghUsername").value.trim();
   const repo     = document.getElementById("ghRepo").value.trim();
   if (!tpl) { el.innerHTML = `<span style="color:var(--muted)">لم يتم اختيار قالب بعد</span>`; return; }
@@ -216,7 +248,7 @@ async function deploy() {
   const username = document.getElementById("ghUsername").value.trim();
   const repo     = document.getElementById("ghRepo").value.trim();
   const desc     = document.getElementById("ghDesc").value.trim();
-  const tpl      = CONFIG.templates.find(t => t.id === state.selectedTemplate);
+    const tpl = getTemplates().find(t => t.id === state.selectedTemplate);
 
   if (!token || !username) return showToast("⚠️ أدخل بيانات GitHub أولاً");
   if (!repo)               return showToast("⚠️ أدخل اسم المستودع");
@@ -375,4 +407,3 @@ function resetAll() {
   showToast("✅ جاهز لإنشاء صفحة جديدة!");
 }
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
-
