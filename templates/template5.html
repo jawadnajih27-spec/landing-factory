@@ -447,17 +447,17 @@ footer{border-top:1px solid var(--border);padding:2rem;display:flex;align-items:
     <div class="rating-row">
       <span class="rating-stars">★★★★★</span>
       <span class="rating-num">4.9</span>
-      <span class="rating-count">(127 تقييم)</span>
-      <span class="rating-sold" id="ph-sold">+340 طلب</span>
+      <span class="rating-count">({{REVIEWS_COUNT}} تقييم)</span>
+      <span class="rating-sold" id="ph-sold">+{{SOLD_COUNT}} طلب</span>
     </div>
 
     <div class="price-block">
       <div class="price-labels">
-        <span class="price-was"><span id="ph-old">499</span> <span style="font-size:.9rem">د.م</span></span>
-        <span class="price-now"><span id="ph-price">299</span></span>
+        <span class="price-was"><span id="ph-old">{{OLD_PRICE}}</span> <span style="font-size:.9rem">د.م</span></span>
+        <span class="price-now"><span id="ph-price">{{PRICE}}</span></span>
         <span class="price-curr">د.م</span>
       </div>
-      <div class="price-save" id="ph-save">وفّر 200 د.م — خصم 40%</div>
+      <div class="price-save" id="ph-save">{{SAVE_TEXT}}</div>
     </div>
 
     <!-- Size Options -->
@@ -668,19 +668,19 @@ footer{border-top:1px solid var(--border);padding:2rem;display:flex;align-items:
 <!-- STICKY BAR -->
 <div class="sticky-bar" data-z>
   <div class="sb-info">
-    <div class="sb-name" id="sb-name">المنتج</div>
-    <div class="sb-price"><span id="sb-price">299</span> <span style="font-size:.85rem;color:var(--muted)">د.م</span></div>
+    <div class="sb-name" id="sb-name">{{PRODUCT_NAME}}</div>
+    <div class="sb-price"><span id="sb-price">{{price}}</span> <span style="font-size:.85rem;color:var(--muted)">د.م</span></div>
   </div>
   <button class="btn-sb" onclick="scrollToOrder()">🛒 اطلب الآن — COD</button>
 </div>
 
-<footer data-z><span>© NJSERVICES — Royal Store</span><span>·</span><span>جميع الحقوق محفوظة</span></footer>
+<footer data-z><span>{{YEAR}} — {{BRAND_NAME}}</span><span>·</span><span>جميع الحقوق محفوظة</span></footer>
 
-<script src="config.js"></script>
 <script>
 // ── State ────────────────────────────────────────────
-let unitPrice = 299;
-let productName = "المنتج";
+let unitPrice = Number("{{PRICE}}") || 299; 
+let productName = "{{PRODUCT_NAME}}" || "المنتج"; 
+const whatsappNumber = "{{WHATSAPP}}";
 
 // ── Load Product ──────────────────────────────────────
 async function loadProduct(){
@@ -794,7 +794,7 @@ function switchTab(btn, paneId){
 // ── WhatsApp CTA ──────────────────────────────────────
 function openWhatsApp(){
   const msg = encodeURIComponent(`مرحباً، أريد الاستفسار عن: ${productName}`);
-  window.open(`https://wa.me/${CONFIG.store.whatsapp}?text=${msg}`, "_blank");
+  window.open(`https://wa.me/${whatsappNumber}?text=${msg}`, "_blank");
 }
 
 // ── Submit Order ──────────────────────────────────────
@@ -829,7 +829,7 @@ function submitOrder(){
   );
 
   setTimeout(() => {
-    window.open(`https://wa.me/${CONFIG.store.whatsapp}?text=${msg}`, "_blank");
+    window.open(`https://wa.me/${whatsappNumber}?text=${msg}`, "_blank");
     document.getElementById("order-form-wrap").style.display = "none";
     document.getElementById("order-success").style.display = "block";
   }, 600);
